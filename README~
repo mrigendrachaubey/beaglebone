@@ -1,0 +1,11 @@
+Project contain these repo and branches in a single repo. To check the history of all these go to respective urls.
+
+git clone git://git.busybox.net/buildroot
+
+ git clone git@github.com:RobertCNelson/bb-kernel.git
+ cd bb-kernel
+ git checkout am33x-v5.10
+
+ git clone git@github.com:u-boot/u-boot.git
+
+
