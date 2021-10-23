@@ -1,9 +1,19 @@
 Project contain these repo and branches in a single repo. To check the history of all these go to respective urls.
 
+cross compiler
+https://snapshots.linaro.org/gnu-toolchain/10.2-2021.04-1/arm-linux-gnueabihf/
+
 git clone git://git.busybox.net/buildroot
 git clone git@github.com:RobertCNelson/bb-kernel.git
 cd bb-kernel
 git checkout am33x-v5.10
 git clone git@github.com:u-boot/u-boot.git
+
+build kernel first.
+❯./build_kernel.sh
+
+then build buildroot, this will build uboot, rootfs and kernel then prepare final images at /home/n/learn/beagleboneblack/buildroot/output/images
+❯ make beaglebone_exp_defconfig
+❯ make -j4
 
 
