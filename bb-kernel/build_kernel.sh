@@ -48,6 +48,7 @@ copy_defconfig () {
 		make ARCH=${KERNEL_ARCH} CROSS_COMPILE="${CC}" "${config}"
 		cp -v .config "${DIR}/patches/ref_${config}"
 		cp -v "${DIR}/patches/defconfig" .config
+		cp -v "${DIR}/patches/ref_${config}" "${DIR}/KERNEL/arch/arm/configs/omap2plus_custom_bbb_defconfig"
 	else
 		make ARCH=${KERNEL_ARCH} CROSS_COMPILE="${CC}" rcn-ee_defconfig
 	fi
