@@ -5,15 +5,101 @@ https://snapshots.linaro.org/gnu-toolchain/10.2-2021.04-1/arm-linux-gnueabihf/
 
 git clone git://git.busybox.net/buildroot
 git clone git@github.com:RobertCNelson/bb-kernel.git
+
 cd bb-kernel
 git checkout am33x-v5.10
 git clone git@github.com:u-boot/u-boot.git
 
-build kernel first.
+build kernel first, this will repatch and sync all the new commits from  upstream beaglebone repo of Robert Nelson
 ❯./build_kernel.sh
 
 then build buildroot, this will build uboot, rootfs and kernel then prepare final images at /home/n/learn/beagleboneblack/buildroot/output/images
+to rebuild uboot in buildroot, copy uboot source to output/build/uboot-custom. If we rename it to uboot-custom1, then source is again copied and image is rebuilt.
 ❯ make beaglebone_exp_defconfig
 ❯ make -j4
+
+Flash
+
+sudo dd if=output/images/sdcard.img of=${DISK}
+
+or
+
+Flashing the image:
+
+sudo dd if=/dev/zero of=${DISK} bs=1M count=10
+sudo dd if=./u-boot/MLO of=${DISK} count=1 seek=1 bs=128k
+sudo dd if=./u-boot/u-boot.img of=${DISK} count=2 seek=1 bs=384k
+
+sudo sfdisk ${DISK} <<-__EOF__
+4M,,L,*
+__EOF__
+
+sudo mkfs.ext4 -L rootfs -O ^metadata_csum,^64bit ${DISK}1
+
+--------------------------------------------------------------
+buildroot notes
+
+http://nightly.buildroot.org/manual.html#rootfs-custom
+
+make beaglebone_custom_defconfig
+make
+
+rebuild kernel
+make linux-dirclean
+make linux-rebuild
+
+rootdir=/home/n/learn/github/bbb/kernel/buildroot/output/build/buildroot-fs/tar/target
+
+genimage --rootpath /tmp/tmp.5Vfuk7Ramx --tmppath /home/n/learn/github/bbb/kernel/buildroot/output/build/genimage.tmp --inputpath /home/n/learn/github/bbb/kernel/buildroot/output/images --outputpath /home/n/learn/github/bbb/kernel/buildroot/output/images --config board/beaglebone/genimage.cfg
+
+
+to build your local kernel create a local.mk file
+
+LINUX_OVERRIDE_SRCDIR = /home/n/learn/github/bbb/kernel/bb-kernel/KERNEL
+UBOOT_OVERRIDE_SRCDIR = /home/n/learn/github/bbb/kernel/bb-kernel/u-boot
+
+It will now only build your package.
+
+default skeleton available under system/skeleton. In my case it is pointing to /home/n/learn/github/bbb/kernel/buildroot/output/host/arm-buildroot-linux-gnueabihf/sysroot
+
+
+http://lists.busybox.net/pipermail/buildroot/2017-August/199720.html
+
+Image generation:
+Buildroot makes a fat partition in which it keeps all uboot, MLO and dtbs. Next is ext4 partition where rootfs lives.
+But from command line we put MLO at and uboot at, rest kernel and all modules lives in boot folder of rootfs.
+
+build configs of Uboot and kernel is done inside buildroot config. Inside beaglebone_exp_defconfig we have 3 configs,
+BR2_DEFCONFIG="/home/n/learn/beagleboneblack/buildroot/configs/beaglebone_exp_defconfig"
+BR2_TARGET_UBOOT_BOARD_DEFCONFIG="am335x_evm"
+BR2_LINUX_KERNEL_DEFCONFIG="omap2plus"
+BR2_TOOLCHAIN_EXTERNAL_PATH="/home/n/learn/beagleboneblack/gcc-linaro-10.2.1-2021.04-x86_64_arm-linux-gnueabihf"
+
+reinstall target directory
+find output/ -name ".stamp_target_installed" -delete
+make -j4
+
+TODO:
+1. Change rootfs directories
+2. Flash each module built in kernel to rootfs
+3. display bringup
+
+-----------------------------------------------------------
+Project overview:
+buildroot is enabled with seperate kernel and uboot.
+First build kernel then
+https://www.waveshare.com/wiki/LCD_CAPE_(7inch)
+
+============================================================
+kernel debugging
+
+mount -t debugfs none /sys/kernel/debug
+cat /sys/kernel/debug/gpio
+
+device tree from running kernel
+dtc -I fs /sys/firmware/devicetree/base
+
+convert dtb to dts by this command:
+dtc -I dtb -O dts -f devicetree_file_name.dtb -o devicetree_file_name.dts
 
 
