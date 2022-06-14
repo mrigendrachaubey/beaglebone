@@ -166,7 +166,7 @@ BR2_XZCAT="xzcat"
 BR2_LZCAT="lzip -d -c"
 BR2_TAR_OPTIONS=""
 BR2_DEFCONFIG="configs/beaglebone_exp_defconfig"
-BR2_DL_DIR="/home/n/dl"
+BR2_DL_DIR="~/dl"
 BR2_HOST_DIR="$(BASE_DIR)/host"
 
 #
