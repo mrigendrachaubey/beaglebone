@@ -216,11 +216,12 @@ fi
 if [  -f "${DIR}/.yakbuild" ] ; then
 	BUILD=$(echo ${kernel_tag} | sed 's/[^-]*//'|| true)
 fi
-make_kernel
-if [ ! "${AUTO_BUILD_DONT_PKG}" ] ; then
-	make_modules_pkg
-	make_dtbs_pkg
-fi
+#Don't build kernel here. Just prepare kernel source for buildroot to build.
+#make_kernel
+#if [ ! "${AUTO_BUILD_DONT_PKG}" ] ; then
+#	make_modules_pkg
+#	make_dtbs_pkg
+#fi
 echo "-----------------------------"
 echo "Script Complete"
 echo "${KERNEL_UTS}" > kernel_version
