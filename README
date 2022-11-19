@@ -103,3 +103,4 @@ convert dtb to dts by this command:
 dtc -I dtb -O dts -f devicetree_file_name.dtb -o devicetree_file_name.dts
 
 
+Latest project creation is in repo: https://github.com/mrigendrachaubey/buildroot
